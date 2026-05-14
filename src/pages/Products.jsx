@@ -22,7 +22,7 @@ import {
     DialogActions,
 } from "@mui/material";
 import { productApi } from "../api/productApi";
-import ProductForm from "../components/ProductForm";
+import ProductForm from "../components/Productform";
 
 const cellSx = {
     borderBottom: "1px solid #1E293B",
