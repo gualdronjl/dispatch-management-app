@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import Navbar from "./components/Navbar";
 import Dispatchlist from "./pages/Dispatchlist";
-import DeliveryPoints from "./pages/DeliveryPoints";
-import DispatchCreate from "./pages/DispatchCreate";
+import Deliverypoints from "./pages/Deliverypoints";
+import Dispatchcreate from "./pages/Dispatchcreate";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
 
@@ -51,7 +51,7 @@ export default function App() {
                 />
                 <Route
                     path="/dispatches/new"
-                    element={<PrivateRoute><Layout><DispatchCreate /></Layout></PrivateRoute>}
+                    element={<PrivateRoute><Layout><Dispatchcreate /></Layout></PrivateRoute>}
                 />
                 <Route
                     path="/dispatches"

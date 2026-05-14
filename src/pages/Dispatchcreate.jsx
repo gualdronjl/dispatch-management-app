@@ -4,7 +4,7 @@ import { useState } from "react";
 import { DispatchForm } from "../components/DispatchForm";
 import { dispatchApi } from "../api/dispatchApi";
 
-export default function DispatchCreate() {
+export default function Dispatchcreate() {
     const navigate = useNavigate();
     const [error, setError] = useState("");
 

@@ -140,7 +140,7 @@ function DeliveryForm({ open, onClose, onSave, point }) {
     );
 }
 
-export default function DeliveryPoints() {
+export default function Deliverypoints() {
     const [points, setPoints] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
