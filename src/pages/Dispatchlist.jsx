@@ -40,8 +40,7 @@ const STATUS_CONFIG = {
 
 const STATUS_OPTIONS = Object.entries(STATUS_CONFIG).map(([value, config]) => ({ value, ...config }));
 
-export const DispatchList = () => {
-    // DispatchList
+export default function DispatchList() {
     const navigate = useNavigate();
     const [dispatches, setDispatches] = useState([]);
     const [loading, setLoading] = useState(true);
