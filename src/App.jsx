@@ -47,7 +47,7 @@ export default function App() {
                 />
                 <Route
                     path="/delivery-points"
-                    element={<PrivateRoute><Layout><DeliveryPoints /></Layout></PrivateRoute>}
+                    element={<PrivateRoute><Layout><Deliverypoints /></Layout></PrivateRoute>}
                 />
                 <Route
                     path="/dispatches/new"
