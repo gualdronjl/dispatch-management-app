@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import Navbar from "./components/Navbar";
-import { DispatchList } from "./pages/DispatchList";
+import { DispatchList } from "./pages/Dispatchlist";
 import DeliveryPoints from "./pages/DeliveryPoints";
 import DispatchCreate from "./pages/DispatchCreate";
 import Products from "./pages/Products";
