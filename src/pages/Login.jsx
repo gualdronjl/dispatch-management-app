@@ -386,12 +386,12 @@ export default function Login() {
                         )}
 
                         <TextField
+                            label="Correo electronico"
                             value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
                             type="email"
                             required
                             fullWidth
-                            disabled 
                             autoComplete="email"
                             sx={inputSx}
                         />

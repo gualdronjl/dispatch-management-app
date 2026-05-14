@@ -31,7 +31,7 @@ const FIELD_SX = {
     },
 };
 
-const EMPTY = { name: "", description: "", price: "", stock: "", unit: "" };
+const EMPTY = { sku: "", name: "", stock: "", unit: "" };
 
 export default function ProductForm({ open, onClose, onSave, product }) {
     const [form, setForm] = useState(EMPTY);
@@ -41,9 +41,8 @@ export default function ProductForm({ open, onClose, onSave, product }) {
     useEffect(() => {
         if (product) {
             setForm({
+                sku: product.sku || "",
                 name: product.name || "",
-                description: product.description || "",
-                price: product.price ?? "",
                 stock: product.stock ?? "",
                 unit: product.unit || "",
             });
@@ -55,11 +54,10 @@ export default function ProductForm({ open, onClose, onSave, product }) {
 
     const validate = () => {
         const e = {};
+        if (!product && !form.sku.trim()) e.sku = "El SKU es requerido";
         if (!form.name.trim()) e.name = "El nombre es requerido";
-        if (!form.price || isNaN(form.price) || Number(form.price) < 0)
-            e.price = "Precio inválido";
-        if (!form.stock || isNaN(form.stock) || Number(form.stock) < 0)
-            e.stock = "Stock inválido";
+        if (form.stock === "" || isNaN(form.stock) || Number(form.stock) < 0) e.stock = "Stock invalido";
+        if (!form.unit.trim()) e.unit = "La unidad es requerida";
         setErrors(e);
         return Object.keys(e).length === 0;
     };
@@ -72,12 +70,18 @@ export default function ProductForm({ open, onClose, onSave, product }) {
     const handleSubmit = async () => {
         if (!validate()) return;
         setLoading(true);
-        await onSave({
-            ...form,
-            price: parseFloat(form.price),
-            // stock: parseInt(form.stock),
-        });
-        setLoading(false);
+        const payload = {
+            name: form.name.trim(),
+            stock: parseInt(form.stock, 10),
+            unit: form.unit.trim(),
+        };
+        if (!product) payload.sku = form.sku.trim();
+
+        try {
+            await onSave(payload);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -125,7 +129,7 @@ export default function ProductForm({ open, onClose, onSave, product }) {
                             {product ? "Editar Producto" : "Nuevo Producto"}
                         </Typography>
                         <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#64748B" }}>
-                            {product ? `ID: ${product.id}` : "Completa los datos del producto"}
+                            {product ? `SKU: ${product.sku}` : "Completa los datos del producto"}
                         </Typography>
                     </Box>
                 </Box>
@@ -133,6 +137,26 @@ export default function ProductForm({ open, onClose, onSave, product }) {
 
             <DialogContent sx={{ pt: 3 }}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+                    {!product && (
+                        <TextField
+                            label="SKU"
+                            name="sku"
+                            value={form.sku}
+                            onChange={handleChange}
+                            error={!!errors.sku}
+                            helperText={errors.sku}
+                            fullWidth
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <i className="lni lni-bar-code" style={{ color: "#64748B", fontSize: 15 }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={FIELD_SX}
+                        />
+                    )}
+
                     <TextField
                         label="Nombre del producto"
                         name="name"
@@ -151,36 +175,7 @@ export default function ProductForm({ open, onClose, onSave, product }) {
                         sx={FIELD_SX}
                     />
 
-                    <TextField
-                        label="Descripción"
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={FIELD_SX}
-                    />
-
                     <Box sx={{ display: "flex", gap: 2 }}>
-                        <TextField
-                            label="Precio"
-                            name="price"
-                            value={form.price}
-                            onChange={handleChange}
-                            error={!!errors.price}
-                            helperText={errors.price}
-                            type="number"
-                            fullWidth
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <i className="lni lni-dollar" style={{ color: "#64748B", fontSize: 15 }} />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={FIELD_SX}
-                        />
                         <TextField
                             label="Stock"
                             name="stock"
@@ -190,6 +185,7 @@ export default function ProductForm({ open, onClose, onSave, product }) {
                             helperText={errors.stock}
                             type="number"
                             fullWidth
+                            inputProps={{ min: 0 }}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -199,23 +195,24 @@ export default function ProductForm({ open, onClose, onSave, product }) {
                             }}
                             sx={FIELD_SX}
                         />
+                        <TextField
+                            label="Unidad"
+                            name="unit"
+                            value={form.unit}
+                            onChange={handleChange}
+                            error={!!errors.unit}
+                            helperText={errors.unit}
+                            fullWidth
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <i className="lni lni-ruler" style={{ color: "#64748B", fontSize: 15 }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={FIELD_SX}
+                        />
                     </Box>
-
-                    <TextField
-                        label="Unidad (ej: kg, unidad, litro)"
-                        name="unit"
-                        value={form.unit}
-                        onChange={handleChange}
-                        fullWidth
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <i className="lni lni-ruler" style={{ color: "#64748B", fontSize: 15 }} />
-                                </InputAdornment>
-                            ),
-                        }}
-                        sx={FIELD_SX}
-                    />
                 </Box>
             </DialogContent>
 
@@ -251,11 +248,7 @@ export default function ProductForm({ open, onClose, onSave, product }) {
                         "&:disabled": { opacity: 0.6 },
                     }}
                 >
-                    {loading ? (
-                        <CircularProgress size={16} sx={{ color: "#fff" }} />
-                    ) : (
-                        <>{product ? "Guardar cambios" : "Crear producto"}</>
-                    )}
+                    {loading ? <CircularProgress size={16} sx={{ color: "#fff" }} /> : <>{product ? "Guardar cambios" : "Crear producto"}</>}
                 </Button>
             </DialogActions>
         </Dialog>

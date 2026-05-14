@@ -1,16 +1,163 @@
-# React + Vite
+# Dispatch Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una aplicación web para la gestión de despachos, productos y puntos de entrega. Construida con React y Vite, utilizando Material-UI para la interfaz de usuario y Axios para las comunicaciones con la API backend.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Autenticación de usuarios**: Sistema de login seguro con tokens JWT.
+- **Gestión de productos**: Crear, leer, actualizar y eliminar productos.
+- **Gestión de despachos**: Crear y gestionar despachos con estados.
+- **Puntos de entrega**: Administrar puntos de entrega para despachos.
+- **Interfaz responsiva**: Diseño adaptativo para dispositivos móviles y desktop.
+- **Protección de rutas**: Rutas privadas que requieren autenticación.
 
-## React Compiler
+## Tecnologías utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**:
+  - React 18.3.1
+  - Vite 5.4.9
+  - Material-UI (@mui/material) 5.16.7
+  - React Router DOM 6.27.0
+  - Axios 1.7.7
 
-## Expanding the ESLint configuration
+- **Herramientas de desarrollo**:
+  - ESLint para linting
+  - Vite para construcción y desarrollo
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Instalación
+
+### Prerrequisitos
+
+- Node.js (versión 16 o superior)
+- npm o yarn
+
+### Pasos de instalación
+
+1. Clona el repositorio:
+   ```bash
+   git clone <url-del-repositorio>
+   cd dispatch-management-app
+   ```
+
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+
+3. Configura las variables de entorno (opcional):
+   Crea un archivo `.env` en la raíz del proyecto y configura la URL de la API:
+   ```
+   VITE_API_URL=http://localhost:8000
+   ```
+   Si no se configura, usará `http://localhost:8000` por defecto.
+
+4. Inicia el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
+
+La aplicación estará disponible en `http://localhost:5173`.
+
+## Uso
+
+### Scripts disponibles
+
+- `npm run dev`: Inicia el servidor de desarrollo con hot reload.
+- `npm run build`: Construye la aplicación para producción.
+- `npm run preview`: Previsualiza la aplicación construida.
+
+### Navegación
+
+- **Login**: Página de inicio de sesión.
+- **Productos**: Gestión de productos (requiere autenticación).
+- **Puntos de entrega**: Gestión de puntos de entrega (requiere autenticación).
+- **Lista de despachos**: Ver despachos existentes (requiere autenticación).
+- **Crear despacho**: Formulario para crear nuevos despachos (requiere autenticación).
+
+### Autenticación
+
+La aplicación utiliza tokens JWT almacenados en localStorage. Las rutas protegidas redirigirán al login si no hay token válido.
+
+## Estructura del proyecto
+
+```
+src/
+├── api/                 # Clientes de API
+│   ├── apiClient.js     # Configuración base de Axios
+│   ├── dispatchApi.js   # API para despachos y puntos de entrega
+│   └── productApi.js    # API para productos
+├── assets/              # Recursos estáticos
+├── components/          # Componentes reutilizables
+│   ├── DispatchForm.jsx # Formulario de despacho
+│   ├── Navbar.jsx       # Barra de navegación
+│   ├── PrivateRoute.jsx # Componente de ruta protegida
+│   └── ProductForm.jsx  # Formulario de producto
+├── context/             # Contextos de React
+│   └── AuthContext.jsx  # Contexto de autenticación
+├── hooks/               # Hooks personalizados
+│   └── useAuth.js       # Hook para autenticación
+├── pages/               # Páginas de la aplicación
+│   ├── DeliveryPoints.jsx # Página de puntos de entrega
+│   ├── DispatchCreate.jsx # Página de creación de despacho
+│   ├── DispatchList.jsx    # Página de lista de despachos
+│   ├── Login.jsx           # Página de login
+│   └── Products.jsx        # Página de productos
+├── App.css              # Estilos globales
+├── App.jsx              # Componente principal
+├── index.css            # Estilos base
+└── main.jsx             # Punto de entrada
+```
+
+## API
+
+La aplicación se comunica con un backend API REST. Los endpoints principales incluyen:
+
+### Autenticación
+- `POST /auth/login`: Iniciar sesión
+- `POST /auth/register`: Registrar usuario
+- `POST /auth/forgot-password`: Recuperar contraseña
+
+### Productos
+- `GET /products/`: Obtener todos los productos
+- `GET /products/{id}`: Obtener producto por ID
+- `POST /products/`: Crear producto
+- `PUT /products/{id}`: Actualizar producto
+- `DELETE /products/{id}`: Eliminar producto
+
+### Despachos
+- `GET /dispatches/`: Obtener todos los despachos
+- `GET /dispatches/{id}`: Obtener despacho por ID
+- `POST /dispatches/`: Crear despacho
+- `PATCH /dispatches/{id}/status`: Actualizar estado del despacho
+
+### Puntos de entrega
+- `GET /delivery-points/`: Obtener todos los puntos
+- `GET /delivery-points/{id}`: Obtener punto por ID
+- `POST /delivery-points/`: Crear punto de entrega
+- `PUT /delivery-points/{id}`: Actualizar punto
+- `DELETE /delivery-points/{id}`: Eliminar punto
+
+## Despliegue
+
+La aplicación está configurada para desplegarse en Vercel. El archivo `vercel.json` contiene la configuración necesaria.
+
+Para desplegar:
+
+1. Construye la aplicación:
+   ```bash
+   npm run build
+   ```
+
+2. Despliega en Vercel o tu plataforma preferida.
+
+## Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
