@@ -225,7 +225,7 @@ export default function Products() {
                 <DialogTitle sx={{ fontFamily: "'DM Sans', sans-serif", color: "#F1F5F9", fontWeight: 700 }}>
                     Confirmar eliminacion
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ paddingTop: '15px !important' }}>
                     <Typography sx={{ fontFamily: "'DM Sans', sans-serif", color: "#94A3B8", fontSize: 14 }}>
                         Deseas desactivar el producto <strong style={{ color: "#F1F5F9" }}>{deleteDialog?.name}</strong>?
                     </Typography>

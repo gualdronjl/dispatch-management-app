@@ -40,3 +40,15 @@
 .read-the-docs {
   color: #888;
 }
+
+.MuiDialogTitle-root + .MuiDialogContent-root {
+    padding-top: 15px !important;
+}
+
+.MuiDialogContent-root {
+    padding-top: 15px !important;
+}
+
+div.MuiDialogContent-root {
+  padding-top: 15px !important;
+}

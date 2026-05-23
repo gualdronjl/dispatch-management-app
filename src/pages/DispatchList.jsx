@@ -40,6 +40,18 @@ const STATUS_CONFIG = {
 
 const STATUS_OPTIONS = Object.entries(STATUS_CONFIG).map(([value, config]) => ({ value, ...config }));
 
+const shortDispatchCode = (dispatch) => {
+    if (dispatch.public_code) return dispatch.public_code;
+    const raw = String(dispatch.id || "").replace(/-/g, "").toUpperCase();
+    return raw.length >= 6 ? `${raw.slice(0, 3)}-${raw.slice(-3)}` : raw;
+};
+
+const deliveryLabel = (dispatch) => {
+    const point = dispatch.delivery_point;
+    if (!point) return `Punto ${String(dispatch.delivery_point_id || "").slice(0, 8)}`;
+    return point.address || point.name || `Punto ${String(dispatch.delivery_point_id || "").slice(0, 8)}`;
+};
+
 export default function DispatchList() {
     const navigate = useNavigate();
     const [dispatches, setDispatches] = useState([]);
@@ -75,7 +87,7 @@ export default function DispatchList() {
     };
 
     const filtered = dispatches.filter((d) =>
-        [d.id, d.delivery_point_id, d.created_by, d.status].some((v) =>
+        [shortDispatchCode(d), d.id, d.delivery_point?.address, d.delivery_point?.name, d.delivery_point?.phone, d.delivery_point_id, d.created_by, d.status].some((v) =>
             String(v || "").toLowerCase().includes(search.toLowerCase())
         )
     );
@@ -101,10 +113,10 @@ export default function DispatchList() {
         <Box>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3, flexWrap: "wrap", gap: 2 }}>
                 <Box>
-                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 22, color: "#F1F5F9" }}>
+                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 23, color: "#F8FAFC" }}>
                         Despachos
                     </Typography>
-                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#64748B", mt: 0.3 }}>
+                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#94A3B8", mt: 0.3 }}>
                         Historial y estado de todos los despachos
                     </Typography>
                 </Box>
@@ -119,14 +131,14 @@ export default function DispatchList() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     size="small"
-                    sx={{ width: { xs: "100%", sm: 280 }, "& .MuiOutlinedInput-root": { bgcolor: "#0D1117", borderRadius: "10px", fontSize: 13, color: "#CBD5E1", fontFamily: "'DM Sans', sans-serif", "& fieldset": { borderColor: "#1E293B" }, "&:hover fieldset": { borderColor: "#334155" }, "&.Mui-focused fieldset": { borderColor: "#FF6B35" } } }}
-                    InputProps={{ startAdornment: <InputAdornment position="start"><i className="lni lni-search-alt" style={{ color: "#64748B", fontSize: 15 }} /></InputAdornment> }}
+                    sx={{ width: { xs: "100%", sm: 320 }, "& .MuiOutlinedInput-root": { bgcolor: "#0D1117", borderRadius: "10px", fontSize: 13, color: "#F1F5F9", fontFamily: "'DM Sans', sans-serif", "& fieldset": { borderColor: "#334155" }, "&:hover fieldset": { borderColor: "#64748B" }, "&.Mui-focused fieldset": { borderColor: "#FF6B35" } } }}
+                    InputProps={{ startAdornment: <InputAdornment position="start"><i className="lni lni-search-alt" style={{ color: "#CBD5E1", fontSize: 15 }} /></InputAdornment> }}
                 />
                 <FormControl size="small" sx={{ minWidth: 160 }}>
                     <Select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        sx={{ bgcolor: "#0D1117", borderRadius: "10px", fontSize: 13, color: "#CBD5E1", fontFamily: "'DM Sans', sans-serif", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#1E293B" }, "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#334155" }, "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#FF6B35" }, "& .MuiSvgIcon-root": { color: "#64748B" } }}
+                        sx={{ bgcolor: "#0D1117", borderRadius: "10px", fontSize: 13, color: "#F1F5F9", fontFamily: "'DM Sans', sans-serif", "& .MuiOutlinedInput-notchedOutline": { borderColor: "#334155" }, "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#64748B" }, "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#FF6B35" }, "& .MuiSvgIcon-root": { color: "#CBD5E1" } }}
                         MenuProps={{ PaperProps: { sx: { bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "10px" } } }}
                     >
                         <MenuItem value="all" sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#CBD5E1" }}>Todos los estados</MenuItem>
@@ -145,8 +157,8 @@ export default function DispatchList() {
                 <Table>
                     <TableHead>
                         <TableRow sx={{ bgcolor: "#060A10" }}>
-                            {["", "ID", "Punto de Entrega", "Fecha", "Estado", "Productos"].map((h) => (
-                                <TableCell key={h} sx={{ ...cellSx, color: "#475569", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", py: 1.5 }}>{h}</TableCell>
+                            {["", "Codigo", "Direccion de entrega", "Fecha", "Estado", "Productos"].map((h) => (
+                                <TableCell key={h} sx={{ ...cellSx, color: "#94A3B8", fontWeight: 800, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", py: 1.5 }}>{h}</TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
@@ -171,8 +183,11 @@ export default function DispatchList() {
                                                 <i className={`lni ${expandedId === d.id ? "lni-chevron-up" : "lni-chevron-down"}`} style={{ fontSize: 13 }} />
                                             </IconButton>
                                         </TableCell>
-                                        <TableCell sx={{ ...cellSx, color: "#475569", fontSize: 11 }}>#{d.id}</TableCell>
-                                        <TableCell sx={{ ...cellSx, fontWeight: 600, color: "#E2E8F0" }}>{d.delivery_point_id}</TableCell>
+                                        <TableCell sx={{ ...cellSx, color: "#F8FAFC", fontSize: 12, fontWeight: 800 }}>{shortDispatchCode(d)}</TableCell>
+                                        <TableCell sx={{ ...cellSx, fontWeight: 700, color: "#E2E8F0" }}>
+                                            {deliveryLabel(d)}
+                                            {d.delivery_point?.phone && <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "#94A3B8" }}>Tel: {d.delivery_point.phone}</Typography>}
+                                        </TableCell>
                                         <TableCell sx={cellSx}>{d.dispatch_date ? new Date(d.dispatch_date).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" }) : "-"}</TableCell>
                                         <TableCell sx={cellSx}>
                                             <FormControl size="small">
@@ -212,7 +227,7 @@ export default function DispatchList() {
                                                             <TableHead>
                                                                 <TableRow>
                                                                     {["Producto ID", "Cantidad"].map((h) => (
-                                                                        <TableCell key={h} sx={{ ...cellSx, color: "#475569", fontWeight: 700, fontSize: 10, letterSpacing: 1, textTransform: "uppercase", py: 1 }}>{h}</TableCell>
+                                                                        <TableCell key={h} sx={{ ...cellSx, color: "#94A3B8", fontWeight: 800, fontSize: 10, letterSpacing: 1, textTransform: "uppercase", py: 1 }}>{h}</TableCell>
                                                                     ))}
                                                                 </TableRow>
                                                             </TableHead>

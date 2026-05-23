@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     Box,
     Typography,
@@ -24,17 +24,17 @@ const FIELD_SX = {
         backgroundColor: "#0D1117",
         borderRadius: "10px",
         fontSize: 13,
-        color: "#E2E8F0",
+        color: "#F1F5F9",
         fontFamily: "'DM Sans', sans-serif",
-        "& fieldset": { borderColor: "#1E293B" },
-        "&:hover fieldset": { borderColor: "#334155" },
+        "& fieldset": { borderColor: "#334155" },
+        "&:hover fieldset": { borderColor: "#64748B" },
         "&.Mui-focused fieldset": { borderColor: "#FF6B35" },
     },
     "& .MuiInputLabel-root": {
-        color: "#64748B",
+        color: "#CBD5E1",
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 13,
-        "&.Mui-focused": { color: "#FF6B35" },
+        "&.Mui-focused": { color: "#F8FAFC" },
     },
 };
 
@@ -50,6 +50,7 @@ export const DispatchForm = ({ onSave }) => {
     const [products, setProducts] = useState([]);
     const [deliveryPoints, setDeliveryPoints] = useState([]);
     const [deliveryPoint, setDeliveryPoint] = useState(null);
+    const [deliverySearch, setDeliverySearch] = useState("");
     const [details, setDetails] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [qty, setQty] = useState("");
@@ -57,15 +58,33 @@ export const DispatchForm = ({ onSave }) => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        Promise.all([productApi.getAll(), deliveryApi.getAll()])
-            .then(([pRes, dRes]) => {
+        productApi.getAll()
+            .then((pRes) => {
                 setProducts(Array.isArray(pRes.data) ? pRes.data : pRes.data.items || []);
-                setDeliveryPoints(Array.isArray(dRes.data) ? dRes.data : dRes.data.items || []);
             })
             .catch((err) => {
-                setError(err.response?.data?.detail || "No se pudieron cargar productos o puntos de entrega.");
+                setError(err.response?.data?.detail || "No se pudieron cargar productos.");
             });
     }, []);
+
+    const fetchDeliveryPoints = useCallback(async (search) => {
+        const query = search.trim();
+        if (query.length < 2) {
+            setDeliveryPoints([]);
+            return;
+        }
+        try {
+            const res = await deliveryApi.getAll({ search: query, limit: 20 });
+            setDeliveryPoints(Array.isArray(res.data) ? res.data : res.data.items || []);
+        } catch (err) {
+            setError(err.response?.data?.detail || "No se pudieron buscar puntos de entrega.");
+        }
+    }, []);
+
+    useEffect(() => {
+        const id = setTimeout(() => fetchDeliveryPoints(deliverySearch), 300);
+        return () => clearTimeout(id);
+    }, [deliverySearch, fetchDeliveryPoints]);
 
     const addDetail = () => {
         if (!selectedProduct || !qty || isNaN(qty) || Number(qty) <= 0) return;
@@ -140,19 +159,33 @@ export const DispatchForm = ({ onSave }) => {
             )}
 
             <Box sx={{ bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "14px", p: 3, mb: 3 }}>
-                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, color: "#FF6B35", mb: 2, textTransform: "uppercase", letterSpacing: 1 }}>
+                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 13, color: "#FF8C42", mb: 2, textTransform: "uppercase", letterSpacing: 1 }}>
                     <i className="lni lni-map-marker" style={{ marginRight: 8 }} />
                     Punto de Entrega
                 </Typography>
-                <Autocomplete
-                    options={deliveryPoints}
-                    getOptionLabel={(o) => `${o.name} - ${o.address || ""}`}
-                    value={deliveryPoint}
-                    onChange={(_, v) => setDeliveryPoint(v)}
-                    sx={{ maxWidth: 620 }}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Seleccionar punto" sx={FIELD_SX} InputProps={{ ...params.InputProps, startAdornment: <InputAdornment position="start"><i className="lni lni-map" style={{ color: "#64748B", fontSize: 14 }} /></InputAdornment> }} />
+                    <Autocomplete
+                        options={deliveryPoints}
+                        getOptionLabel={(o) => o?.name ? `${o.name} - ${o.address || ""}` : ""}
+                        filterOptions={(options) => options}
+                        value={deliveryPoint}
+                        onChange={(_, v) => setDeliveryPoint(v)}
+                        inputValue={deliverySearch}
+                        onInputChange={(_, v) => setDeliverySearch(v)}
+                        noOptionsText={deliverySearch.trim().length < 2 ? "Escribe al menos 2 caracteres" : "Sin resultados"}
+                        sx={{ maxWidth: 620 }}
+                        renderInput={(params) => (
+                        <TextField {...params} label="Buscar punto por NIT, CC, telefono, nombre o direccion" sx={FIELD_SX} InputProps={{ ...params.InputProps, startAdornment: <InputAdornment position="start"><i className="lni lni-map" style={{ color: "#CBD5E1", fontSize: 14 }} /></InputAdornment> }} />
                     )}
+                        renderOption={(props, option) => (
+                            <Box component="li" {...props} sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#CBD5E1" }}>
+                                <Box>
+                                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#F1F5F9", fontWeight: 700 }}>{option.name}</Typography>
+                                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "#94A3B8" }}>
+                                        {option.document_type || ""} {option.document_number || ""} - {option.address || ""} - Tel: {option.phone || "-"}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        )}
                     slotProps={{ paper: { sx: { bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "10px" } } }}
                 />
             </Box>

@@ -9,7 +9,7 @@ export const dispatchApi = {
 };
 
 export const deliveryApi = {
-    getAll: () => apiClient.get("/delivery-points/"),
+    getAll: (params) => apiClient.get("/delivery-points/", { params }),
     getById: (id) => apiClient.get(`/delivery-points/${id}`),
     create: (data) => apiClient.post("/delivery-points/", data),
     update: (id, data) => apiClient.put(`/delivery-points/${id}`, data),

@@ -18,16 +18,16 @@ const FIELD_SX = {
         borderRadius: "10px",
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 13,
-        color: "#E2E8F0",
-        "& fieldset": { borderColor: "#1E293B" },
-        "&:hover fieldset": { borderColor: "#334155" },
+        color: "#F1F5F9",
+        "& fieldset": { borderColor: "#334155" },
+        "&:hover fieldset": { borderColor: "#64748B" },
         "&.Mui-focused fieldset": { borderColor: "#FF6B35" },
     },
     "& .MuiInputLabel-root": {
-        color: "#64748B",
+        color: "#CBD5E1",
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 13,
-        "&.Mui-focused": { color: "#FF6B35" },
+        "&.Mui-focused": { color: "#F8FAFC" },
     },
 };
 
@@ -135,7 +135,7 @@ export default function ProductForm({ open, onClose, onSave, product }) {
                 </Box>
             </DialogTitle>
 
-            <DialogContent sx={{ pt: 3 }}>
+            <DialogContent sx={{ pt: "24px !important" }}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
                     {!product && (
                         <TextField

@@ -6,6 +6,7 @@ import DeliveryPoints from "./pages/DeliveryPoints.jsx";
 import DispatchCreate from "./pages/DispatchCreate.jsx";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
+import "./App.css";
 
 function PrivateRoute({ children }) {
     const token = localStorage.getItem("access_token");

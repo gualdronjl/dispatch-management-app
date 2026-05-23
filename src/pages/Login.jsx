@@ -369,7 +369,7 @@ export default function Login() {
                             display: "flex",
                             flexDirection: "column",
                             gap: 2,
-                            pt: 3,
+                            pt: '15px',
                         }}
                     >
 
