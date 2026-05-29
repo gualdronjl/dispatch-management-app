@@ -4,13 +4,18 @@ import Navbar from "./components/Navbar";
 import DispatchList from "./pages/DispatchList.jsx";
 import DeliveryPoints from "./pages/DeliveryPoints.jsx";
 import DispatchCreate from "./pages/DispatchCreate.jsx";
+import Drivers from "./pages/Drivers.jsx";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
 import "./App.css";
+import { getStoredRole } from "./utils/auth";
 
-function PrivateRoute({ children }) {
+function PrivateRoute({ children, roles }) {
     const token = localStorage.getItem("access_token");
-    return token ? children : <Navigate to="/login" replace />;
+    const role = getStoredRole();
+    if (!token) return <Navigate to="/login" replace />;
+    if (roles && !roles.includes(role)) return <Navigate to="/dispatches" replace />;
+    return children;
 }
 
 function Layout({ children }) {
@@ -51,8 +56,12 @@ export default function App() {
                     element={<PrivateRoute><Layout><DeliveryPoints /></Layout></PrivateRoute>}
                 />
                 <Route
+                    path="/drivers"
+                    element={<PrivateRoute roles={["ADMIN", "SUPERVISOR"]}><Layout><Drivers /></Layout></PrivateRoute>}
+                />
+                <Route
                     path="/dispatches/new"
-                    element={<PrivateRoute><Layout><DispatchCreate /></Layout></PrivateRoute>}
+                    element={<PrivateRoute roles={["ADMIN", "OPERADOR"]}><Layout><DispatchCreate /></Layout></PrivateRoute>}
                 />
                 <Route
                     path="/dispatches"

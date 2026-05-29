@@ -35,7 +35,7 @@ Una aplicación web para la gestión de despachos, productos y puntos de entrega
 
 1. Clona el repositorio:
    ```bash
-   git clone <url-del-repositorio>
+   git clone https://github.com/gualdronjl/dispatch-management-app.git
    cd dispatch-management-app
    ```
 
@@ -140,6 +140,7 @@ La aplicación se comunica con un backend API REST. Los endpoints principales in
 ## Despliegue
 
 La aplicación está configurada para desplegarse en Vercel. El archivo `vercel.json` contiene la configuración necesaria.
+Tambien incluye soporte PWA con `manifest.webmanifest`, `service-worker.js`, iconos instalables y meta tags moviles.
 
 Para desplegar:
 
@@ -157,6 +158,24 @@ Para desplegar:
 3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Abre un Pull Request
+
+## Ajustes solicitados en mayo de 2026
+
+- Se agrega el modulo de conductores asociados a placas vehiculares.
+- `ADMIN` puede crear, editar y desactivar conductores.
+- `SUPERVISOR` puede consultar el grid de conductores en solo lectura.
+- `OPERADOR` no ve el modulo de conductores, pero puede buscar conductor/placa activa desde el formulario de despacho.
+- El formulario de despacho exige punto de entrega, conductor/placa y productos antes de crear el registro.
+- La lista de despachos muestra conductor y placa guardada en base de datos.
+- Al iniciar sesion como `OPERADOR`, se muestra una ventana de terminos y condiciones con boton `Siguiente`.
+- La app queda preparada como PWA instalable y mantiene layout responsive en mobile/desktop.
+
+### Endpoints nuevos usados por el frontend
+
+- `GET /drivers/?search=texto&status=ACTIVO&limit=20`
+- `POST /drivers/`
+- `PUT /drivers/{id}`
+- `DELETE /drivers/{id}`
 
 ## Licencia
 

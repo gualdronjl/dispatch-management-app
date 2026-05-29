@@ -17,7 +17,7 @@ import {
     InputAdornment,
 } from "@mui/material";
 import { productApi } from "../api/productApi";
-import { deliveryApi } from "../api/dispatchApi";
+import { deliveryApi, driverApi } from "../api/dispatchApi";
 
 const FIELD_SX = {
     "& .MuiOutlinedInput-root": {
@@ -51,6 +51,9 @@ export const DispatchForm = ({ onSave }) => {
     const [deliveryPoints, setDeliveryPoints] = useState([]);
     const [deliveryPoint, setDeliveryPoint] = useState(null);
     const [deliverySearch, setDeliverySearch] = useState("");
+    const [drivers, setDrivers] = useState([]);
+    const [driver, setDriver] = useState(null);
+    const [driverSearch, setDriverSearch] = useState("");
     const [details, setDetails] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [qty, setQty] = useState("");
@@ -85,6 +88,25 @@ export const DispatchForm = ({ onSave }) => {
         const id = setTimeout(() => fetchDeliveryPoints(deliverySearch), 300);
         return () => clearTimeout(id);
     }, [deliverySearch, fetchDeliveryPoints]);
+
+    const fetchDrivers = useCallback(async (search) => {
+        const query = search.trim();
+        if (query.length < 2) {
+            setDrivers([]);
+            return;
+        }
+        try {
+            const res = await driverApi.getAll({ search: query, status: "ACTIVO", limit: 20 });
+            setDrivers(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            setError(err.response?.data?.detail || "No se pudieron buscar conductores.");
+        }
+    }, []);
+
+    useEffect(() => {
+        const id = setTimeout(() => fetchDrivers(driverSearch), 300);
+        return () => clearTimeout(id);
+    }, [driverSearch, fetchDrivers]);
 
     const addDetail = () => {
         if (!selectedProduct || !qty || isNaN(qty) || Number(qty) <= 0) return;
@@ -132,6 +154,7 @@ export const DispatchForm = ({ onSave }) => {
 
     const handleSubmit = async () => {
         if (!deliveryPoint) { setError("Selecciona un punto de entrega"); return; }
+        if (!driver) { setError("Selecciona un conductor o placa de entrega"); return; }
         if (details.length === 0) { setError("Agrega al menos un producto"); return; }
         if (details.some((d) => !d.quantity || d.quantity <= 0 || d.quantity > d.stock)) {
             setError("Revisa las cantidades. Deben ser mayores a cero y no superar el stock.");
@@ -143,6 +166,7 @@ export const DispatchForm = ({ onSave }) => {
         try {
             await onSave({
                 delivery_point_id: deliveryPoint.id,
+                driver_id: driver.id,
                 details: details.map((d) => ({ product_id: d.product_id, quantity: d.quantity })),
             });
         } finally {
@@ -186,6 +210,38 @@ export const DispatchForm = ({ onSave }) => {
                                 </Box>
                             </Box>
                         )}
+                    slotProps={{ paper: { sx: { bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "10px" } } }}
+                />
+            </Box>
+
+            <Box sx={{ bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "14px", p: 3, mb: 3 }}>
+                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 13, color: "#FF8C42", mb: 2, textTransform: "uppercase", letterSpacing: 1 }}>
+                    <i className="lni lni-delivery" style={{ marginRight: 8 }} />
+                    Conductor y Placa
+                </Typography>
+                <Autocomplete
+                    options={drivers}
+                    getOptionLabel={(o) => o?.full_name ? `${o.full_name} - ${o.plate}` : ""}
+                    filterOptions={(options) => options}
+                    value={driver}
+                    onChange={(_, v) => setDriver(v)}
+                    inputValue={driverSearch}
+                    onInputChange={(_, v) => setDriverSearch(v)}
+                    noOptionsText={driverSearch.trim().length < 2 ? "Busca por conductor, placa, CC o telefono" : "Sin resultados"}
+                    sx={{ maxWidth: 620 }}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Buscar conductor o placa" sx={FIELD_SX} InputProps={{ ...params.InputProps, startAdornment: <InputAdornment position="start"><i className="lni lni-user" style={{ color: "#CBD5E1", fontSize: 14 }} /></InputAdornment> }} />
+                    )}
+                    renderOption={(props, option) => (
+                        <Box component="li" {...props} sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#CBD5E1" }}>
+                            <Box>
+                                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#F1F5F9", fontWeight: 700 }}>{option.full_name} - {option.plate}</Typography>
+                                <Typography sx={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "#94A3B8" }}>
+                                    CC: {option.cc} - Licencia: {option.license_type} {option.license_number} - Tel: {option.phone}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    )}
                     slotProps={{ paper: { sx: { bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "10px" } } }}
                 />
             </Box>

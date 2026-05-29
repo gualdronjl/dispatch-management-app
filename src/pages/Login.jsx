@@ -29,6 +29,7 @@ export default function Login() {
     const [forgotLoading, setForgotLoading] = useState(false);
     const [forgotError, setForgotError] = useState("");
     const [forgotSuccess, setForgotSuccess] = useState("");
+    const [termsOpen, setTermsOpen] = useState(false);
 
     const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -45,16 +46,29 @@ export default function Login() {
         try {
             const res = await authApi.login(form);
             const token = res.data?.access_token || res.data?.token || res.data?.accessToken;
+            const user = res.data?.user;
             if (!token) {
                 throw new Error("No se recibio el token de autenticacion.");
             }
             localStorage.setItem("access_token", token);
-            navigate("/products");
+            if (user) {
+                localStorage.setItem("user", JSON.stringify(user));
+            }
+            if (user?.role?.toUpperCase() === "OPERADOR") {
+                setTermsOpen(true);
+            } else {
+                navigate("/products");
+            }
         } catch (err) {
             setError(getErrorMessage(err, "Credenciales incorrectas. Intenta de nuevo."));
         } finally {
             setLoading(false);
         }
+    };
+
+    const continueAfterTerms = () => {
+        setTermsOpen(false);
+        navigate("/products");
     };
 
     const openForgotPassword = () => {
@@ -443,6 +457,22 @@ export default function Login() {
                         </Button>
                     </DialogActions>
                 </Box>
+            </Dialog>
+
+            <Dialog open={termsOpen} onClose={continueAfterTerms} PaperProps={{ sx: dialogPaperSx }}>
+                <DialogTitle sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800 }}>
+                    Terminos y condiciones
+                </DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ fontFamily: "'DM Sans', sans-serif", color: "#CBD5E1", fontSize: 14 }}>
+                        Al continuar aceptas usar el sistema solo para registrar informacion veraz de productos, puntos de entrega y despachos, proteger tus credenciales y respetar los estados operativos definidos por la empresa.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 3 }}>
+                    <Button onClick={continueAfterTerms} sx={{ bgcolor: "#FF6B35", color: "#fff", fontWeight: 700, "&:hover": { bgcolor: "#E85A24" } }}>
+                        Siguiente
+                    </Button>
+                </DialogActions>
             </Dialog>
         </Box>
     );

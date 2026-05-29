@@ -23,6 +23,7 @@ import {
     MenuItem,
 } from "@mui/material";
 import { deliveryApi } from "../api/dispatchApi";
+import { isAdmin, isOperator } from "../utils/auth";
 
 const CITY = "Villavicencio";
 
@@ -179,6 +180,8 @@ export default function DeliveryPoints() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState(null);
+    const canEdit = isAdmin() || isOperator();
+    const canDelete = isAdmin();
 
     const fetchPoints = useCallback(async () => {
         setLoading(true);
@@ -233,9 +236,11 @@ export default function DeliveryPoints() {
                         Destinos en Villavicencio con documento y telefono de contacto
                     </Typography>
                 </Box>
-                <Button onClick={() => { setEditing(null); setFormOpen(true); }} startIcon={<i className="lni lni-circle-plus" style={{ fontSize: 16 }} />} sx={{ background: "linear-gradient(135deg,#FF6B35,#FF8C42)", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, borderRadius: "10px", px: 2.5, py: 1.1, boxShadow: "0 4px 16px rgba(255,107,53,0.3)", "&:hover": { background: "linear-gradient(135deg,#E85A24,#FF6B35)" } }}>
-                    Nuevo Punto
-                </Button>
+                {canEdit && (
+                    <Button onClick={() => { setEditing(null); setFormOpen(true); }} startIcon={<i className="lni lni-circle-plus" style={{ fontSize: 16 }} />} sx={{ background: "linear-gradient(135deg,#FF6B35,#FF8C42)", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, borderRadius: "10px", px: 2.5, py: 1.1, boxShadow: "0 4px 16px rgba(255,107,53,0.3)", "&:hover": { background: "linear-gradient(135deg,#E85A24,#FF6B35)" } }}>
+                        Nuevo Punto
+                    </Button>
+                )}
             </Box>
 
             <TextField
@@ -281,16 +286,23 @@ export default function DeliveryPoints() {
                                     <TableCell sx={cellSx}>{p.phone || "-"}</TableCell>
                                     <TableCell sx={cellSx}>
                                         <Box sx={{ display: "flex", gap: 0.5 }}>
-                                            <Tooltip title="Editar">
-                                                <IconButton size="small" onClick={() => { setEditing(p); setFormOpen(true); }} sx={{ color: "#94A3B8", "&:hover": { color: "#FF6B35", bgcolor: "rgba(255,107,53,0.1)" }, borderRadius: "8px" }}>
-                                                    <i className="lni lni-pencil" style={{ fontSize: 15 }} />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Eliminar">
-                                                <IconButton size="small" onClick={() => setDeleteDialog(p)} sx={{ color: "#94A3B8", "&:hover": { color: "#EF4444", bgcolor: "rgba(239,68,68,0.1)" }, borderRadius: "8px" }}>
-                                                    <i className="lni lni-trash" style={{ fontSize: 15 }} />
-                                                </IconButton>
-                                            </Tooltip>
+                                            {canEdit && (
+                                                <Tooltip title="Editar">
+                                                    <IconButton size="small" onClick={() => { setEditing(p); setFormOpen(true); }} sx={{ color: "#94A3B8", "&:hover": { color: "#FF6B35", bgcolor: "rgba(255,107,53,0.1)" }, borderRadius: "8px" }}>
+                                                        <i className="lni lni-pencil" style={{ fontSize: 15 }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                            {canDelete && (
+                                                <Tooltip title="Eliminar">
+                                                    <IconButton size="small" onClick={() => setDeleteDialog(p)} sx={{ color: "#94A3B8", "&:hover": { color: "#EF4444", bgcolor: "rgba(239,68,68,0.1)" }, borderRadius: "8px" }}>
+                                                        <i className="lni lni-trash" style={{ fontSize: 15 }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                            {!canEdit && !canDelete && (
+                                                <Typography sx={{ color: "#94A3B8", fontSize: 12 }}>Solo lectura</Typography>
+                                            )}
                                         </Box>
                                     </TableCell>
                                 </TableRow>

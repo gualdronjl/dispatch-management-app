@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="Dispatch Manager">
+  <rect width="192" height="192" rx="42" fill="#060A10"/>
+  <rect x="27" y="49" width="93" height="65" rx="12" fill="#FF6B35"/>
+  <path d="M120 69h27l21 24v21h-48V69Z" fill="#FF8C42"/>
+  <circle cx="63" cy="126" r="15" fill="#F8FAFC"/>
+  <circle cx="138" cy="126" r="15" fill="#F8FAFC"/>
+  <path d="M47 72h50M47 90h38" stroke="#F8FAFC" stroke-width="12" stroke-linecap="round"/>
+</svg>

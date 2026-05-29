@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { productApi } from "../api/productApi";
 import ProductForm from "../components/Productform";
+import { isAdmin, isOperator } from "../utils/auth";
 
 const cellSx = {
     borderBottom: "1px solid #1E293B",
@@ -41,6 +42,8 @@ export default function Products() {
     const [editing, setEditing] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    const canEdit = isAdmin() || isOperator();
+    const canDelete = isAdmin();
 
     const fetchProducts = useCallback(async () => {
         setLoading(true);
@@ -106,13 +109,15 @@ export default function Products() {
                         Gestiona el catalogo de productos disponibles
                     </Typography>
                 </Box>
-                <Button
-                    onClick={() => { setEditing(null); setFormOpen(true); }}
-                    startIcon={<i className="lni lni-circle-plus" style={{ fontSize: 16 }} />}
-                    sx={{ background: "linear-gradient(135deg,#FF6B35,#FF8C42)", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, borderRadius: "10px", px: 2.5, py: 1.1, boxShadow: "0 4px 16px rgba(255,107,53,0.3)", "&:hover": { background: "linear-gradient(135deg,#E85A24,#FF6B35)" } }}
-                >
-                    Nuevo Producto
-                </Button>
+                {canEdit && (
+                    <Button
+                        onClick={() => { setEditing(null); setFormOpen(true); }}
+                        startIcon={<i className="lni lni-circle-plus" style={{ fontSize: 16 }} />}
+                        sx={{ background: "linear-gradient(135deg,#FF6B35,#FF8C42)", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, borderRadius: "10px", px: 2.5, py: 1.1, boxShadow: "0 4px 16px rgba(255,107,53,0.3)", "&:hover": { background: "linear-gradient(135deg,#E85A24,#FF6B35)" } }}
+                    >
+                        Nuevo Producto
+                    </Button>
+                )}
             </Box>
 
             <TextField
@@ -194,16 +199,23 @@ export default function Products() {
                                         <TableCell sx={cellSx}>{p.status || "ACTIVE"}</TableCell>
                                         <TableCell sx={cellSx}>
                                             <Box sx={{ display: "flex", gap: 0.5 }}>
-                                                <Tooltip title="Editar">
-                                                    <IconButton size="small" onClick={() => { setEditing(p); setFormOpen(true); }} sx={{ color: "#64748B", "&:hover": { color: "#FF6B35", bgcolor: "rgba(255,107,53,0.1)" }, borderRadius: "8px" }}>
-                                                        <i className="lni lni-pencil" style={{ fontSize: 15 }} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Eliminar">
-                                                    <IconButton size="small" onClick={() => setDeleteDialog(p)} sx={{ color: "#64748B", "&:hover": { color: "#EF4444", bgcolor: "rgba(239,68,68,0.1)" }, borderRadius: "8px" }}>
-                                                        <i className="lni lni-trash" style={{ fontSize: 15 }} />
-                                                    </IconButton>
-                                                </Tooltip>
+                                                {canEdit && (
+                                                    <Tooltip title="Editar">
+                                                        <IconButton size="small" onClick={() => { setEditing(p); setFormOpen(true); }} sx={{ color: "#64748B", "&:hover": { color: "#FF6B35", bgcolor: "rgba(255,107,53,0.1)" }, borderRadius: "8px" }}>
+                                                            <i className="lni lni-pencil" style={{ fontSize: 15 }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
+                                                {canDelete && (
+                                                    <Tooltip title="Eliminar">
+                                                        <IconButton size="small" onClick={() => setDeleteDialog(p)} sx={{ color: "#64748B", "&:hover": { color: "#EF4444", bgcolor: "rgba(239,68,68,0.1)" }, borderRadius: "8px" }}>
+                                                            <i className="lni lni-trash" style={{ fontSize: 15 }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
+                                                {!canEdit && !canDelete && (
+                                                    <Typography sx={{ color: "#94A3B8", fontSize: 12 }}>Solo lectura</Typography>
+                                                )}
                                             </Box>
                                         </TableCell>
                                     </TableRow>

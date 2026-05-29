@@ -19,12 +19,14 @@ import {
     useTheme,
     Chip,
 } from "@mui/material";
+import { getStoredRole } from "../utils/auth";
 
 const NAV_ITEMS = [
-    { label: "Productos", path: "/products", icon: "lni lni-package" },
-    { label: "Puntos de Entrega", path: "/delivery-points", icon: "lni lni-map-marker" },
-    { label: "Nuevo Despacho", path: "/dispatches/new", icon: "lni lni-circle-plus" },
-    { label: "Despachos", path: "/dispatches", icon: "lni lni-list" },
+    { label: "Productos", path: "/products", icon: "lni lni-package", roles: ["ADMIN", "OPERADOR", "SUPERVISOR"] },
+    { label: "Puntos de Entrega", path: "/delivery-points", icon: "lni lni-map-marker", roles: ["ADMIN", "OPERADOR", "SUPERVISOR"] },
+    { label: "Conductores", path: "/drivers", icon: "lni lni-users", roles: ["ADMIN", "SUPERVISOR"] },
+    { label: "Nuevo Despacho", path: "/dispatches/new", icon: "lni lni-circle-plus", roles: ["ADMIN", "OPERADOR"] },
+    { label: "Despachos", path: "/dispatches", icon: "lni lni-list", roles: ["ADMIN", "OPERADOR", "SUPERVISOR"] },
 ];
 
 export default function Navbar() {
@@ -33,9 +35,12 @@ export default function Navbar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const role = getStoredRole();
+    const navItems = NAV_ITEMS.filter((item) => item.roles.includes(role));
 
     const handleLogout = () => {
         localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
         navigate("/login");
     };
 
@@ -43,7 +48,7 @@ export default function Navbar() {
 
     const NavLinks = () => (
         <List disablePadding>
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
                 <ListItem key={item.path} disablePadding>
                     <ListItemButton
                         onClick={() => { navigate(item.path); setDrawerOpen(false); }}
@@ -138,7 +143,7 @@ export default function Navbar() {
                                 <Typography sx={{ color: "#F1F5F9", fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
                                     Usuario
                                 </Typography>
-                                <Chip label="Admin" size="small" sx={{ height: 16, fontSize: 9, bgcolor: "rgba(255,107,53,0.15)", color: "#FF6B35", fontFamily: "'DM Sans', sans-serif" }} />
+                                <Chip label={role || "Usuario"} size="small" sx={{ height: 16, fontSize: 9, bgcolor: "rgba(255,107,53,0.15)", color: "#FF6B35", fontFamily: "'DM Sans', sans-serif" }} />
                             </Box>
                         </Box>
                         <ListItemButton

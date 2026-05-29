@@ -16,6 +16,14 @@ export const deliveryApi = {
     delete: (id) => apiClient.delete(`/delivery-points/${id}`),
 };
 
+export const driverApi = {
+    getAll: (params) => apiClient.get("/drivers/", { params }),
+    getById: (id) => apiClient.get(`/drivers/${id}`),
+    create: (data) => apiClient.post("/drivers/", data),
+    update: (id, data) => apiClient.put(`/drivers/${id}`, data),
+    delete: (id) => apiClient.delete(`/drivers/${id}`),
+};
+
 export const authApi = {
     login: (credentials) => apiClient.post("/auth/login", credentials),
     register: (data) => apiClient.post("/auth/register", data),

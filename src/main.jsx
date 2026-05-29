@@ -55,3 +55,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </ThemeProvider>
     </React.StrictMode>
 );
+
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js").catch(() => {
+            // La app sigue funcionando aunque el navegador bloquee el registro.
+        });
+    });
+}
