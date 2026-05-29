@@ -160,7 +160,7 @@ export default function DispatchList() {
             <TableContainer sx={{ bgcolor: "#0D1117", border: "1px solid #1E293B", borderRadius: "14px", overflow: "hidden" }}>
                 <Table>
                     <TableHead>
-                        <TableRow sx={{ bgcolor: "#060A10" }}>
+                        <TableRow sx={{ bgcolor: "#060A10" }}> 
                             {["", "Codigo", "Direccion de entrega", "Conductor / placa", "Fecha", "Estado", "Productos"].map((h) => (
                                 <TableCell key={h} sx={{ ...cellSx, color: "#94A3B8", fontWeight: 800, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", py: 1.5 }}>{h}</TableCell>
                             ))}
