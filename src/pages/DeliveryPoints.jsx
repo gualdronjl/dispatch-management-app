@@ -23,7 +23,7 @@ import {
     MenuItem,
 } from "@mui/material";
 import { deliveryApi } from "../api/dispatchApi";
-import { isAdmin, isOperator } from "../utils/auth";
+import { isAdmin } from "../utils/auth";
 
 const CITY = "Villavicencio";
 
@@ -180,7 +180,7 @@ export default function DeliveryPoints() {
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState(null);
-    const canEdit = isAdmin() || isOperator();
+    const canEdit = isAdmin();
     const canDelete = isAdmin();
 
     const fetchPoints = useCallback(async () => {

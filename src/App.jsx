@@ -10,6 +10,8 @@ import Login from "./pages/Login";
 import "./App.css";
 import { getStoredRole } from "./utils/auth";
 
+const homeByRole = (role) => role === "OPERADOR" ? "/dispatches" : "/products";
+
 function PrivateRoute({ children, roles }) {
     const token = localStorage.getItem("access_token");
     const role = getStoredRole();
@@ -43,17 +45,19 @@ function Layout({ children }) {
 }
 
 export default function App() {
+    const RoleRedirect = () => <Navigate to={homeByRole(getStoredRole())} replace />;
+
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route
                     path="/products"
-                    element={<PrivateRoute><Layout><Products /></Layout></PrivateRoute>}
+                    element={<PrivateRoute roles={["ADMIN", "SUPERVISOR"]}><Layout><Products /></Layout></PrivateRoute>}
                 />
                 <Route
                     path="/delivery-points"
-                    element={<PrivateRoute><Layout><DeliveryPoints /></Layout></PrivateRoute>}
+                    element={<PrivateRoute roles={["ADMIN", "SUPERVISOR"]}><Layout><DeliveryPoints /></Layout></PrivateRoute>}
                 />
                 <Route
                     path="/drivers"
@@ -67,8 +71,8 @@ export default function App() {
                     path="/dispatches"
                     element={<PrivateRoute><Layout><DispatchList /></Layout></PrivateRoute>}
                 />
-                <Route path="/" element={<Navigate to="/products" replace />} />
-                <Route path="*" element={<Navigate to="/products" replace />} />
+                <Route path="/" element={<PrivateRoute><RoleRedirect /></PrivateRoute>} />
+                <Route path="*" element={<PrivateRoute><RoleRedirect /></PrivateRoute>} />
             </Routes>
         </BrowserRouter>
     );

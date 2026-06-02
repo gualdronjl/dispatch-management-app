@@ -22,10 +22,10 @@ import {
 import { getStoredRole } from "../utils/auth";
 
 const NAV_ITEMS = [
-    { label: "Productos", path: "/products", icon: "lni lni-package", roles: ["ADMIN", "OPERADOR", "SUPERVISOR"] },
-    { label: "Puntos de Entrega", path: "/delivery-points", icon: "lni lni-map-marker", roles: ["ADMIN", "OPERADOR", "SUPERVISOR"] },
+    { label: "Productos", path: "/products", icon: "lni lni-package", roles: ["ADMIN", "SUPERVISOR"] },
+    { label: "Puntos de Entrega", path: "/delivery-points", icon: "lni lni-map-marker", roles: ["ADMIN", "SUPERVISOR"] },
     { label: "Conductores", path: "/drivers", icon: "lni lni-users", roles: ["ADMIN", "SUPERVISOR"] },
-    { label: "Nuevo Despacho", path: "/dispatches/new", icon: "lni lni-circle-plus", roles: ["ADMIN", "OPERADOR"] },
+    { label: "Nuevo Despacho", path: "/dispatches/new", icon: "lni lni-circle-plus", roles: ["ADMIN"] },
     { label: "Despachos", path: "/dispatches", icon: "lni lni-list", roles: ["ADMIN", "OPERADOR", "SUPERVISOR"] },
 ];
 

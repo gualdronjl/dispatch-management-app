@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { productApi } from "../api/productApi";
 import ProductForm from "../components/Productform";
-import { isAdmin, isOperator } from "../utils/auth";
+import { isAdmin } from "../utils/auth";
 
 const cellSx = {
     borderBottom: "1px solid #1E293B",
@@ -42,7 +42,7 @@ export default function Products() {
     const [editing, setEditing] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
-    const canEdit = isAdmin() || isOperator();
+    const canEdit = isAdmin();
     const canDelete = isAdmin();
 
     const fetchProducts = useCallback(async () => {

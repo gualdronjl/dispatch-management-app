@@ -68,7 +68,7 @@ export default function Login() {
 
     const continueAfterTerms = () => {
         setTermsOpen(false);
-        navigate("/products");
+        navigate("/dispatches");
     };
 
     const openForgotPassword = () => {

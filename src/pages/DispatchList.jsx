@@ -234,7 +234,7 @@ export default function DispatchList() {
                                                         <Table size="small">
                                                             <TableHead>
                                                                 <TableRow>
-                                                                    {["Producto ID", "Cantidad"].map((h) => (
+                                                                    {["SKU", "Producto", "Cantidad"].map((h) => (
                                                                         <TableCell key={h} sx={{ ...cellSx, color: "#94A3B8", fontWeight: 800, fontSize: 10, letterSpacing: 1, textTransform: "uppercase", py: 1 }}>{h}</TableCell>
                                                                     ))}
                                                                 </TableRow>
@@ -242,7 +242,10 @@ export default function DispatchList() {
                                                             <TableBody>
                                                                 {d.details.map((det) => (
                                                                     <TableRow key={det.id}>
-                                                                        <TableCell sx={{ ...cellSx, color: "#E2E8F0", fontWeight: 600 }}>{det.product_id}</TableCell>
+                                                                        <TableCell sx={{ ...cellSx, color: "#F8FAFC", fontWeight: 800 }}>{det.product?.sku || "-"}</TableCell>
+                                                                        <TableCell sx={{ ...cellSx, color: "#E2E8F0", fontWeight: 600 }}>
+                                                                            {det.product?.name || `Producto ${String(det.product_id || "").slice(0, 8)}`}
+                                                                        </TableCell>
                                                                         <TableCell sx={cellSx}>{det.quantity}</TableCell>
                                                                     </TableRow>
                                                                 ))}
