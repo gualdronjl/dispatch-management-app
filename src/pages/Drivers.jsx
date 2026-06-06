@@ -30,7 +30,7 @@ const EMPTY = {
     cc: "",
     plate: "",
     license_expiration_date: "",
-    license_type: "",
+    license_type: "C1",
     license_number: "",
     status: "ACTIVO",
 };
@@ -88,7 +88,23 @@ function DriverForm({ open, driver, onClose, onSave }) {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        let newValue = value;
+        if (name === "email") {
+            newValue = value.trim().toLowerCase();
+        }
+        if (name === "phone") {
+            newValue = value.replace(/\D/g, "").slice(0, 10);
+        }
+        if (name === "plate") {
+            newValue = value
+                .toUpperCase()
+                .replace(/[^A-Z0-9]/g, "")
+                .slice(0, 6);
+        }
+        if (name === "license_number") {
+            newValue = value.replace(/\D/g, "").slice(0, 15);
+        }
+        setForm((prev) => ({ ...prev, [name]: newValue }));
     };
 
     const handleSubmit = async () => {
@@ -119,9 +135,35 @@ function DriverForm({ open, driver, onClose, onSave }) {
                     <TextField label="Nombre completo" name="full_name" value={form.full_name} onChange={handleChange} sx={fieldSx} />
                     <TextField label="Telefono" name="phone" value={form.phone} onChange={handleChange} sx={fieldSx} />
                     <TextField label="CC" name="cc" value={form.cc} onChange={handleChange} sx={fieldSx} />
-                    <TextField label="Placa" name="plate" value={form.plate} onChange={handleChange} sx={fieldSx} />
+                    <TextField
+                        label="Placa"
+                        name="plate"
+                        value={
+                            form.plate.length >= 6
+                                ? `${form.plate.slice(0, 3)} - ${form.plate.slice(3)}`
+                                : form.plate
+                        }
+                        onChange={handleChange}
+                        sx={fieldSx}
+                    />
                     <TextField label="Fecha expiracion licencia" name="license_expiration_date" type="date" value={form.license_expiration_date} onChange={handleChange} InputLabelProps={{ shrink: true }} sx={fieldSx} />
-                    <TextField label="Tipo de licencia" name="license_type" value={form.license_type} onChange={handleChange} sx={fieldSx} />
+                    <TextField
+                        select
+                        label="Tipo de licencia"
+                        name="license_type"
+                        value={form.license_type}
+                        onChange={handleChange}
+                        sx={fieldSx}
+                    >
+                        <MenuItem value="A1">A1 - Moto hasta 125 cc</MenuItem>
+                        <MenuItem value="A2">A2 - Moto más de 125 cc</MenuItem>
+                        <MenuItem value="B1">B1 - Automóvil particular</MenuItem>
+                        <MenuItem value="B2">B2 - Camión o bus particular</MenuItem>
+                        <MenuItem value="B3">B3 - Vehículo articulado particular</MenuItem>
+                        <MenuItem value="C1">C1 - Automóvil servicio público</MenuItem>
+                        <MenuItem value="C2">C2 - Camión o bus servicio público</MenuItem>
+                        <MenuItem value="C3">C3 - Vehículo articulado servicio público</MenuItem>
+                    </TextField>
                     <TextField label="Numero de licencia" name="license_number" value={form.license_number} onChange={handleChange} sx={fieldSx} />
                     <TextField select label="Estado" name="status" value={form.status} onChange={handleChange} sx={fieldSx}>
                         <MenuItem value="ACTIVO">Activo</MenuItem>
@@ -236,18 +278,8 @@ export default function Drivers() {
                             return (
                                 <TableRow key={driver.id}>
                                     <TableCell sx={{ ...cellSx, color: "#F1F5F9", fontWeight: 700 }}>{driver.full_name}</TableCell>
-                                    <TableCell sx={cellSx}>
-                                        {driver.email &&
-                                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(driver.email)
-                                        ? driver.email
-                                        : "Correo inválido"}
-                                    </TableCell>
-                                    <TableCell sx={cellSx}>
-                                        {(() => {
-                                            const phone = String(driver.phone || "").replace(/\D/g, "");
-                                            return /^\d{10}$/.test(phone) ? phone : "Número inválido";
-                                        })()}
-                                    </TableCell>
+                                    <TableCell sx={cellSx}>{driver.email} </TableCell>
+                                    <TableCell sx={cellSx}>{driver.phone}</TableCell>
                                     <TableCell sx={cellSx}>{driver.cc}</TableCell>
                                     <TableCell sx={{ ...cellSx, color: "#F8FAFC", fontWeight: 800 }}>{driver.plate}</TableCell>
                                     <TableCell sx={cellSx}>{driver.license_type} - {driver.license_number}</TableCell>

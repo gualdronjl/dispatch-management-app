@@ -222,7 +222,7 @@ export default function Login() {
                             color: "#F1F5F9",
                         }}
                     >
-                        Dispatch Manager
+                        Gestor de Despachos
                     </Typography>
                     <Typography
                         sx={{

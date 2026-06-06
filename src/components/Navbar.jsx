@@ -117,12 +117,12 @@ export default function Navbar() {
                                 <i className="lni lni-delivery" style={{ color: "#fff", fontSize: 16 }} />
                             </Box>
                             <Box>
-                                <Typography sx={{ color: "#F1F5F9", fontWeight: 800, fontSize: 14, lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
-                                    DISPATCH
+                                <Typography sx={{ color: "#FF6B35", fontWeight: 800, fontSize: 14, lineHeight: 1, fontFamily: "'DM Sans', sans-serif" }}>
+                                    Gestor de Despachos
                                 </Typography>
-                                <Typography sx={{ color: "#FF6B35", fontWeight: 600, fontSize: 10, letterSpacing: 2, fontFamily: "'DM Sans', sans-serif" }}>
+                                {/* <Typography sx={{ color: "#FF6B35", fontWeight: 600, fontSize: 10, letterSpacing: 2, fontFamily: "'DM Sans', sans-serif" }}>
                                     MANAGER
-                                </Typography>
+                                </Typography> */}
                             </Box>
                         </Box>
                     </Box>
@@ -176,7 +176,7 @@ export default function Navbar() {
                                     <i className="lni lni-delivery" style={{ color: "#fff", fontSize: 13 }} />
                                 </Box>
                                 <Typography sx={{ color: "#F1F5F9", fontWeight: 800, fontSize: 14, fontFamily: "'DM Sans', sans-serif" }}>
-                                    DISPATCH MANAGER
+                                    Gestor de Despachos
                                 </Typography>
                             </Box>
                             <IconButton onClick={() => setDrawerOpen(true)} sx={{ color: "#94A3B8" }}>

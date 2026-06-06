@@ -1,6 +1,6 @@
 {
-  "name": "Dispatch Manager",
-  "short_name": "Dispatch",
+  "name": "Gestor de Despachos",
+  "short_name": "Despachos",
   "description": "Gestion de productos, puntos de entrega, conductores y despachos.",
   "lang": "es-CO",
   "start_url": "/",
