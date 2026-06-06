@@ -100,8 +100,39 @@ function DeliveryForm({ open, onClose, onSave, point }) {
     };
 
     const handleChange = (e) => {
-        setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
-        setErrors((p) => ({ ...p, [e.target.name]: undefined }));
+        const { name, value } = e.target;
+        let newValue = value;
+        switch (name) {
+            case "document_number":
+                newValue = value.replace(/\D/g, "").slice(0, 15);
+                break;
+
+            case "phone":
+                newValue = value.replace(/\D/g, "").slice(0, 10);
+                break;
+
+            case "name":
+                newValue = value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s.-]/g, "");
+                break;
+
+            case "receiver_name":
+                newValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
+                break;
+
+            case "zone":
+                newValue = value.slice(0, 50);
+                break;
+
+            case "delivery_schedule":
+                newValue = value.slice(0, 100);
+                break;
+
+            default:
+                break;
+        }
+
+        setForm((prev) => ({ ...prev, [name]: newValue }));
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
     };
 
     const handleSubmit = async () => {
