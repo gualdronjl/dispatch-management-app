@@ -91,10 +91,22 @@ function DeliveryForm({ open, onClose, onSave, point }) {
 
     const validate = () => {
         const e = {};
-        if (!form.document_number.trim()) e.document_number = "El NIT o CC es requerido";
-        if (!form.name.trim()) e.name = "El nombre es requerido";
-        if (!form.address.trim()) e.address = "La direccion es requerida";
-        if (!form.phone.trim()) e.phone = "El telefono es requerido";
+        if (!form.document_number.trim()) {
+            e.document_number = "El NIT o CC es requerido";
+        } else if (!/^\d{5,15}$/.test(form.document_number)) {
+            e.document_number = "Documento inválido";
+        }
+        if (!form.name.trim()) {
+            e.name = "El nombre es requerido";
+        }
+        if (!form.address.trim()) {
+            e.address = "La dirección es requerida";
+        }
+        if (!form.phone.trim()) {
+            e.phone = "El teléfono es requerido";
+        } else if (!/^\d{10}$/.test(form.phone)) {
+            e.phone = "Debe contener 10 dígitos";
+        }
         setErrors(e);
         return Object.keys(e).length === 0;
     };
@@ -175,7 +187,7 @@ function DeliveryForm({ open, onClose, onSave, point }) {
                             <MenuItem value="CC">CC</MenuItem>
                             <MenuItem value="NIT">NIT</MenuItem>
                         </TextField>
-                        <TextField label="NIT o CC" name="document_number" value={form.document_number} onChange={handleChange} error={!!errors.document_number} helperText={errors.document_number} fullWidth sx={FIELD_SX} />
+                        <TextField label="NIT o CC" name="document_number" value={form.document_number} onChange={handleChange} error={!!errors.document_number} helperText={errors.document_number} inputProps={{ maxLength: 15 }} fullWidth sx={FIELD_SX} />
                     </Box>
                     <TextField label="Nombre del punto" name="name" value={form.name} onChange={handleChange} error={!!errors.name} helperText={errors.name} fullWidth sx={FIELD_SX} />
                     <TextField label="Direccion en Villavicencio" name="address" value={form.address} onChange={handleChange} error={!!errors.address} helperText={errors.address} fullWidth sx={FIELD_SX} />
@@ -185,7 +197,7 @@ function DeliveryForm({ open, onClose, onSave, point }) {
                     </Box>
                     <Box sx={{ display: "flex", gap: 2 }}>
                         <TextField label="Recibe" name="receiver_name" value={form.receiver_name} onChange={handleChange} fullWidth sx={FIELD_SX} />
-                        <TextField label="Telefono" name="phone" value={form.phone} onChange={handleChange} error={!!errors.phone} helperText={errors.phone} fullWidth sx={FIELD_SX} />
+                        <TextField label="Telefono" name="phone" value={form.phone} onChange={handleChange} error={!!errors.phone} helperText={errors.phone} inputProps={{ maxLength: 10 }} fullWidth sx={FIELD_SX} />
                     </Box>
                     <TextField label="Horario de entrega" name="delivery_schedule" value={form.delivery_schedule} onChange={handleChange} fullWidth sx={FIELD_SX} />
                 </Box>
